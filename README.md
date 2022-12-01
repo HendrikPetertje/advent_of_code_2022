@@ -35,5 +35,5 @@ below:
 ```
 mix test test/01/day_1_test.exs
 
-mix test test/01/day_1_test.exs:66
+mix test test/01/day_1_test.exs:78
 ```
