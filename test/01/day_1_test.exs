@@ -23,25 +23,22 @@ defmodule ElfCalories do
 
   defp map_to_elf_with_total_calories(lists_per_elf) do
     lists_per_elf
-    |> Enum.map(
-      fn string_collection -> 
-        string_collection
-        # Split per newline
-        |> String.split("\n")
-        # remove empty string from last newline
-        |> Enum.reject(fn value -> value == "" end)
-        # Turn to integers
-        |> Enum.map(fn string_value -> String.to_integer(string_value) end)
-        # Perform a total sum
-        |> Enum.sum()
-      end
-    )
+    |> Enum.map(fn string_collection ->
+      string_collection
+      # Split per newline
+      |> String.split("\n")
+      # remove empty string from last newline
+      |> Enum.reject(fn value -> value == "" end)
+      # Turn to integers
+      |> Enum.map(fn string_value -> String.to_integer(string_value) end)
+      # Perform a total sum
+      |> Enum.sum()
+    end)
   end
 end
 
 defmodule Day1Test do
   use ExUnit.Case
-  doctest AOC2022
 
   def read_test do
     """
@@ -72,10 +69,10 @@ defmodule Day1Test do
     result = ElfCalories.elf_no_with_most_calories(elf_list)
     assert result == 24000
 
-
     real_elf_list = read_fixture()
     real_result = ElfCalories.elf_no_with_most_calories(real_elf_list)
-    assert real_result == 68442
+
+    IO.puts("Puzzle 1: #{real_result}")
   end
 
   test "Puzzle 2: total sum of 3 elves with most calories" do
@@ -86,6 +83,7 @@ defmodule Day1Test do
 
     real_elf_list = read_fixture()
     real_result = ElfCalories.total_calories_by_3_richest_elves(real_elf_list)
-    assert real_result == 204837
+
+    IO.puts("Puzzle 2: #{real_result}")
   end
 end
