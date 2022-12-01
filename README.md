@@ -1,21 +1,39 @@
-# AOC2022
+# Advent Of Code 2022
 
-**TODO: Add description**
+This is my advent of code repo containing Advent of code challenges written in
+Elixir.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `adventofcode_2022` to your list of dependencies in `mix.exs`:
+Make sure you have Erlang and Elixir installed on your machine, either through
+Homebrew or apt-get or alternatively through [ASDF](https://asdf-vm.com/)
 
-```elixir
-def deps do
-  [
-    {:adventofcode_2022, "~> 0.1.0"}
-  ]
-end
+Once installed execute the following command on a terminal in this repository:
+
+```
+mix deps.get
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/adventofcode_2022>.
+## Checking out the challenges
 
+All challenges are written as Uni tests in the test directory. You can check the
+challenges out in the test directory or better yet; you can execute them!
+
+The main test command will run all the tests in alphabetical order (so per day
+and per challenge) in a trace-view mode.
+
+Most tests will execute an assert on demo-data first and then put the result of
+the real test in the console output.
+
+```
+mix test
+```
+
+You can execute individual days (or even challenges) by executing any of the
+below:
+
+```
+mix test test/01/day_1_test.exs
+
+mix test test/01/day_1_test.exs:66
+```

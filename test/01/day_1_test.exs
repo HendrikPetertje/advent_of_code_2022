@@ -72,7 +72,7 @@ defmodule Day1Test do
     real_elf_list = read_fixture()
     real_result = ElfCalories.elf_no_with_most_calories(real_elf_list)
 
-    IO.puts("Puzzle 1: #{real_result}")
+    IO.puts(" Puzzle 1 answer: << #{real_result} >>")
   end
 
   test "Puzzle 2: total sum of 3 elves with most calories" do
@@ -84,6 +84,6 @@ defmodule Day1Test do
     real_elf_list = read_fixture()
     real_result = ElfCalories.total_calories_by_3_richest_elves(real_elf_list)
 
-    IO.puts("Puzzle 2: #{real_result}")
+    IO.puts(" Puzzle 2 answer: << #{real_result} >>")
   end
 end
