@@ -39,7 +39,7 @@ defmodule BagContentsMachine do
     |> Enum.sum()
   end
 
-  # priority methods
+  # items in both bag pocket methods
   defp divide_pockets_in_bag(all_contents) do
     all_contents
     |> Enum.map(fn contents ->
@@ -165,7 +165,7 @@ defmodule Day3Test do
     File.read!("test/03/fixture/bag_contents.txt")
   end
 
-  test "Puzzle 1: Read the sum of priorities of item types in all bags" do
+  test "Puzzle 1: Read the sum of items carried in both pockets in each elf bag" do
     test_contents = read_test()
 
     test_result = BagContentsMachine.get_priority_score_of_wrongly_placed_items(test_contents)
@@ -176,7 +176,7 @@ defmodule Day3Test do
     IO.puts(" Puzzle 1 answer: << #{real_result} >>")
   end
 
-  test "Puzzle 2: Find the sum of priorities of badges carried by elves" do
+  test "Puzzle 2: Find the sum of priorities of badges carried by elf groups" do
     test_contents = read_test()
 
     test_result = BagContentsMachine.get_priority_of_group_badges(test_contents)
