@@ -1,0 +1,11 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: cimg/elixir:1.14.2
+    steps:
+      - checkout
+      - run: mix --version
+      - run: mix deps.get
+      - run: mix test
