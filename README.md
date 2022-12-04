@@ -3,6 +3,10 @@
 This is my advent of code repo containing Advent of code challenges written in
 Elixir.
 
+Each day is contained in a single test file, the current state of all tests is:
+
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/HendrikPetertje/advent_of_code_2022/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/HendrikPetertje/advent_of_code_2022/tree/main)
+
 ## Installation
 
 Make sure you have Erlang and Elixir installed on your machine, either through
