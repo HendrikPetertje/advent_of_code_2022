@@ -20,17 +20,34 @@ defmodule CrateDiagnosticMachine do
       12
 
   """
-  def calculate_new_top_after_reconfig(input_data, numer_of_stacks, can_move_multiple_at_once) do
+  def calculate_new_top_after_reconfig(input_data, can_move_multiple_at_once) do
     input_data
-    |> parse_stacks(numer_of_stacks)
+    |> get_number_of_stacks()
+    |> parse_stacks()
     |> parse_actions()
     |> execute_instructions(can_move_multiple_at_once)
     |> render_output()
   end
 
-  defp parse_stacks(input_data, number_of_stacks) do
-    # Create data map
+  # 1
+  defp get_number_of_stacks(input_data) do
+    number_of_stacks =
+      input_data
+      # divide between stacks and actions
+      |> String.split("\n\n")
+      |> List.first()
+      # divide between lines
+      |> String.split("\n")
+      |> List.last()
+      |> String.split("\s\s\s")
+      |> Enum.count()
 
+    %{input_data: input_data, number_of_stacks: number_of_stacks}
+  end
+
+  # 2
+  defp parse_stacks(input) do
+    %{input_data: input_data, number_of_stacks: number_of_stacks} = input
     # Split initial data apart from stack
     [stack_data | _] = input_data |> String.split("\n 1")
     split_stack_data = stack_data |> String.split("\n")
@@ -44,27 +61,10 @@ defmodule CrateDiagnosticMachine do
         Regex.named_captures(regex_string, line)
       end)
 
-    stack1 = captures_to_list(capts, "res1")
-    stack2 = captures_to_list(capts, "res2")
-    stack3 = captures_to_list(capts, "res3")
-    stack4 = captures_to_list(capts, "res4")
-    stack5 = captures_to_list(capts, "res5")
-    stack6 = captures_to_list(capts, "res6")
-    stack7 = captures_to_list(capts, "res7")
-    stack8 = captures_to_list(capts, "res8")
-    stack9 = captures_to_list(capts, "res9")
-
-    stacks = %{
-      stack1: stack1,
-      stack2: stack2,
-      stack3: stack3,
-      stack4: stack4,
-      stack5: stack5,
-      stack6: stack6,
-      stack7: stack7,
-      stack8: stack8,
-      stack9: stack9
-    }
+    stacks =
+      1..number_of_stacks
+      |> Enum.map(fn item -> %{"stack#{item}" => captures_to_list(capts, "res#{item}")} end)
+      |> Enum.reduce(&Map.merge/2)
 
     %{stacks: stacks, input_data: input_data}
   end
@@ -76,6 +76,7 @@ defmodule CrateDiagnosticMachine do
     |> Enum.reverse()
   end
 
+  # 3
   defp parse_actions(input) do
     %{stacks: stacks, input_data: input_data} = input
 
@@ -93,6 +94,7 @@ defmodule CrateDiagnosticMachine do
     %{stacks: stacks, actions: actions}
   end
 
+  # 4
   defp execute_instructions(input, can_move_multiple_at_once) do
     %{stacks: stacks, actions: actions} = input
 
@@ -105,31 +107,8 @@ defmodule CrateDiagnosticMachine do
     previous_stacks = execute(stacks, tail, can_move_multiple_at_once)
 
     %{"num" => num, "from" => from, "to" => to} = instruction
-
-    [stacks_step_1, numbers] =
-      case from do
-        "1" -> calculate_removal(previous_stacks, :stack1, num)
-        "2" -> calculate_removal(previous_stacks, :stack2, num)
-        "3" -> calculate_removal(previous_stacks, :stack3, num)
-        "4" -> calculate_removal(previous_stacks, :stack4, num)
-        "5" -> calculate_removal(previous_stacks, :stack5, num)
-        "6" -> calculate_removal(previous_stacks, :stack6, num)
-        "7" -> calculate_removal(previous_stacks, :stack7, num)
-        "8" -> calculate_removal(previous_stacks, :stack8, num)
-        "9" -> calculate_removal(previous_stacks, :stack9, num)
-      end
-
-    case to do
-      "1" -> calculate_adding(stacks_step_1, :stack1, numbers, can_move_multiple_at_once)
-      "2" -> calculate_adding(stacks_step_1, :stack2, numbers, can_move_multiple_at_once)
-      "3" -> calculate_adding(stacks_step_1, :stack3, numbers, can_move_multiple_at_once)
-      "4" -> calculate_adding(stacks_step_1, :stack4, numbers, can_move_multiple_at_once)
-      "5" -> calculate_adding(stacks_step_1, :stack5, numbers, can_move_multiple_at_once)
-      "6" -> calculate_adding(stacks_step_1, :stack6, numbers, can_move_multiple_at_once)
-      "7" -> calculate_adding(stacks_step_1, :stack7, numbers, can_move_multiple_at_once)
-      "8" -> calculate_adding(stacks_step_1, :stack8, numbers, can_move_multiple_at_once)
-      "9" -> calculate_adding(stacks_step_1, :stack9, numbers, can_move_multiple_at_once)
-    end
+    [stacks_step_1, numbers] = calculate_removal(previous_stacks, "stack#{from}", num)
+    calculate_adding(stacks_step_1, "stack#{to}", numbers, can_move_multiple_at_once)
   end
 
   defp calculate_removal(stacks, from, num) do
@@ -138,7 +117,7 @@ defmodule CrateDiagnosticMachine do
     new_list = Enum.drop(stacks[from], to_remove)
 
     [
-      Map.merge(stacks, %{"#{from}": new_list}),
+      Map.merge(stacks, %{"#{from}" => new_list}),
       taken
     ]
   end
@@ -148,21 +127,15 @@ defmodule CrateDiagnosticMachine do
     to_add = if can_move_multiple_at_once, do: numbers, else: Enum.reverse(numbers)
     new_list = Enum.concat(stacks[to], to_add)
 
-    Map.merge(stacks, %{"#{to}": new_list})
+    Map.merge(stacks, %{"#{to}" => new_list})
   end
 
+  # 5
   defp render_output(stacks) do
-    item1 = List.last(stacks[:stack1])
-    item2 = List.last(stacks[:stack2])
-    item3 = List.last(stacks[:stack3])
-    item4 = List.last(stacks[:stack4])
-    item5 = List.last(stacks[:stack5])
-    item6 = List.last(stacks[:stack6])
-    item7 = List.last(stacks[:stack7])
-    item8 = List.last(stacks[:stack8])
-    item9 = List.last(stacks[:stack9])
-
-    "#{item1}#{item2}#{item3}#{item4}#{item5}#{item6}#{item7}#{item8}#{item9}"
+    stacks
+    |> Map.keys()
+    |> Enum.map(fn key -> stacks[key] |> List.last() end)
+    |> Enum.join()
   end
 end
 
@@ -195,22 +168,22 @@ defmodule Day5Test do
   test "Puzzle 1: Follow instructions and see what ends up on top with Mover 9000" do
     test_data = read_test()
 
-    test_result = CrateDiagnosticMachine.calculate_new_top_after_reconfig(test_data, 3, false)
+    test_result = CrateDiagnosticMachine.calculate_new_top_after_reconfig(test_data, false)
     assert test_result == "CMZ"
 
     real_data = read_fixture()
-    real_result = CrateDiagnosticMachine.calculate_new_top_after_reconfig(real_data, 9, false)
+    real_result = CrateDiagnosticMachine.calculate_new_top_after_reconfig(real_data, false)
     IO.puts(" Puzzle 1 answer: << #{real_result} >>")
   end
 
   test "Puzzle 2: Follow instructions and see what ends up on top with Mover 9001" do
     test_data = read_test()
 
-    test_result = CrateDiagnosticMachine.calculate_new_top_after_reconfig(test_data, 3, true)
+    test_result = CrateDiagnosticMachine.calculate_new_top_after_reconfig(test_data, true)
     assert test_result == "MCD"
 
     real_data = read_fixture()
-    real_result = CrateDiagnosticMachine.calculate_new_top_after_reconfig(real_data, 9, true)
+    real_result = CrateDiagnosticMachine.calculate_new_top_after_reconfig(real_data, true)
     IO.puts(" Puzzle 2 answer: << #{real_result} >>")
   end
 end
