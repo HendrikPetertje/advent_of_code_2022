@@ -64,20 +64,8 @@ defmodule GenerateDay do
         test_result = #{module}.do_something(test_data)
         assert test_result == "TBD"
 
-        real_data = read_fixture()
-        real_result = ModuleName.do_something(real_data)
-        IO.puts(" Puzzle 1 answer: << \#{real_result} >>")
-      end
-
-      @tag :skip
-      test "Puzzle 2: TBD" do
-        # test_data = read_test()
-
-        # test_result = ModuleName.do_something(test_data)
-        # assert test_result == "TBD"
-
         # real_data = read_fixture()
-        # real_result = ModuleName.do_something(test_data)
+        # real_result = #{module}.do_something(real_data)
         # IO.puts(" Puzzle 1 answer: << \#{real_result} >>")
       end
     end
