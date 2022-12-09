@@ -275,22 +275,22 @@ defmodule Day8Test do
   test "Puzzle 1: Get total number of visible trees" do
     test_data = read_test()
 
-    test_result = TreeHouseLocatorMachine.count_visible_trees(test_data, true)
+    test_result = TreeHouseLocatorMachine.count_visible_trees(test_data, false)
     assert test_result == 21
 
     real_data = read_fixture()
-    real_result = TreeHouseLocatorMachine.count_visible_trees(real_data, true)
+    real_result = TreeHouseLocatorMachine.count_visible_trees(real_data, false)
     IO.puts(" Puzzle 1 answer: << #{real_result} >>")
   end
 
   test "Puzzle 2: Get scenic score of the higest tree" do
     test_data = read_test()
 
-    test_result = TreeHouseLocatorMachine.get_scenic_score_of_best_scenic_tree(test_data, true)
+    test_result = TreeHouseLocatorMachine.get_scenic_score_of_best_scenic_tree(test_data, false)
     assert test_result == 8
 
     real_data = read_fixture()
-    real_result = TreeHouseLocatorMachine.get_scenic_score_of_best_scenic_tree(real_data, true)
+    real_result = TreeHouseLocatorMachine.get_scenic_score_of_best_scenic_tree(real_data, false)
     IO.puts(" Puzzle 2 answer: << #{real_result} >>")
   end
 end
