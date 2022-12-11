@@ -1,19 +1,22 @@
 defmodule CathodeMachine do
   @moduledoc """
-  module-wide docs
+  This little module debugs the cathode display of a radio
+  and helps visualize what is on its screen in case the Cathode or glass ever breaks
+
+  it takes instructions from the CPU and turns it into data we can use
   """
 
   @doc """
-  What does this do?
+  gets the total signal strength from CPU signals
 
   ## Parameters
 
-    - input_data: newline-split records of something.
+    - input_data: newline-split records of instructions.
 
   ## Examples
 
-      iex> example(input_data)
-      TBD
+      iex> get_signal_strength(input_data)
+      2000
 
   """
   def get_signal_strength(input_data) do
@@ -22,6 +25,24 @@ defmodule CathodeMachine do
     |> perform_instructions()
   end
 
+  @doc """
+  Draws a picture
+
+  ## Parameters
+
+    - input_data: newline-split records of instructions.
+
+  ## Examples
+
+      iex> get_signal_strength(input_data)
+      ###  #### ###   ##    ## #### #    #  #
+      #  #    # #  # #  #    # #    #    # #
+      ###    #  #  # #  #    # ###  #    ##
+      #  #  #   ###  ####    # #    #    # #
+      #  # #    #    #  # #  # #    #    # #
+      ###  #### #    #  #  ##  #### #### #  #
+
+  """
   def get_picture(input_data) do
     input_data
     |> split_and_clean()
@@ -147,12 +168,6 @@ defmodule Day10Test do
   """
 
   def read_test do
-    """
-    noop
-    addx 3
-    addx -5
-    """
-
     File.read!("test/10/fixture/test_instructions.txt")
   end
 
@@ -160,7 +175,7 @@ defmodule Day10Test do
     File.read!("test/10/fixture/cpu_instructions.txt")
   end
 
-  test "Puzzle 1: TB" do
+  test "Puzzle 1: get signal strength from CPU messages" do
     test_data = read_test()
 
     test_result = CathodeMachine.get_signal_strength(test_data)
@@ -171,14 +186,16 @@ defmodule Day10Test do
     IO.puts(" Puzzle 1 answer: << #{real_result} >>")
   end
 
-  test "Puzzle 2: TB" do
+  test "Puzzle 2: Figure out what instructions are being sent to the screen and draw a picture" do
     test_data = read_test()
 
     test_result = CathodeMachine.get_picture(test_data)
-    IO.puts("\n#{test_result}")
+    assert is_bitstring(test_result) == true
 
     real_data = read_fixture()
     real_result = CathodeMachine.get_picture(real_data)
+    assert is_bitstring(real_result) == true
+
     IO.puts(" Puzzle 2 answer:")
     IO.puts("\n#{real_result}")
   end

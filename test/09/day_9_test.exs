@@ -1,10 +1,11 @@
 defmodule RopeBridgeMachine do
   @moduledoc """
-  module-wide docs
+  Simulates a rope bridge and its perils
   """
 
   @doc """
-  What does this do?
+  Find the tail steps, so one can safely cross the bridge
+  the returned result is a sum of all unique locations visited by the tail
 
   ## Parameters
 
@@ -12,8 +13,8 @@ defmodule RopeBridgeMachine do
 
   ## Examples
 
-      iex> example(input_data)
-      TBD
+      iex> find_tail_steps(input_data)
+      15
 
   """
   def find_tail_steps(input_data) do
@@ -24,6 +25,21 @@ defmodule RopeBridgeMachine do
     |> find_unique_positions()
   end
 
+  @doc """
+  Turn to this method in case of rope bridge failure.
+  it returns a list of unique positions visited by the end of a rope that has 9
+  knots on it.
+
+  ## Parameters
+
+    - input_data: newline-split records of something.
+
+  ## Examples
+
+      iex> find_rope_steps(input_data)
+      15
+
+  """
   def find_rope_steps(input_data) do
     input_data
     |> divide_by_newlines()
@@ -150,7 +166,7 @@ defmodule RopeBridgeMachine do
   end
 
   defp perform_rope_instruction(
-         [[direction, amount] = instruction | rest],
+         [[direction, amount] | rest],
          pos_head,
          pos_1,
          pos_2,

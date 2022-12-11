@@ -57,11 +57,12 @@ defmodule FileSystemMachine do
   defp divide_command_and_output(commands) do
     commands
     |> Enum.map(fn input ->
-        [cmd | output] = input
+      [cmd | output] =
+        input
         |> String.split("\n")
         |> Enum.reject(fn output -> output == "" end)
 
-        %{cmd: cmd, out: output}
+      %{cmd: cmd, out: output}
     end)
   end
 
@@ -69,10 +70,11 @@ defmodule FileSystemMachine do
   defp process_commands(commands, obj \\ %{}, current_path \\ "root")
 
   # 3 Process LS commands
-  defp process_commands([%{ cmd: "ls", out: out } | rest], obj, current_path) do
-    output = out
+  defp process_commands([%{cmd: "ls", out: out} | rest], obj, current_path) do
+    output =
+      out
       |> Enum.map(fn item -> item |> String.split(" ") end)
-      |> Enum.reject(fn [ dir_or_size, _ ] -> dir_or_size == "dir" end)
+      |> Enum.reject(fn [dir_or_size, _] -> dir_or_size == "dir" end)
       |> Enum.map(fn [size, _] -> size |> String.to_integer() end)
       |> Enum.sum()
 
@@ -88,12 +90,13 @@ defmodule FileSystemMachine do
   end
 
   # 3 Process cd commands
-  defp process_commands([%{ cmd: "cd " <> path } | rest], obj, current_path) do
-    new_path = case path do
-      ".." -> current_path |> String.split("/") |> Enum.drop(-1) |> Enum.join("/")
-      "/" -> "root"
-      new_dir -> current_path <> "/" <> new_dir
-    end
+  defp process_commands([%{cmd: "cd " <> path} | rest], obj, current_path) do
+    new_path =
+      case path do
+        ".." -> current_path |> String.split("/") |> Enum.drop(-1) |> Enum.join("/")
+        "/" -> "root"
+        new_dir -> current_path <> "/" <> new_dir
+      end
 
     process_commands(
       rest,
@@ -107,11 +110,13 @@ defmodule FileSystemMachine do
 
   # Update object helpers
   defp insert_size_at_path([], _, obj), do: obj
+
   defp insert_size_at_path(path, output, obj) do
     new_path = path |> Enum.join("/")
     pre_existing = obj[new_path] || 0
 
-    new_obj = Map.merge(obj, %{ new_path => pre_existing + output })
+    new_obj = Map.merge(obj, %{new_path => pre_existing + output})
+
     insert_size_at_path(
       Enum.drop(path, -1),
       output,
@@ -123,23 +128,23 @@ defmodule FileSystemMachine do
   defp sum_dirs_under_100000(input) do
     input
     |> Map.keys()
-    |> Enum.map(fn key -> 
+    |> Enum.map(fn key ->
       input[key]
     end)
-    |> Enum.reject(fn value -> value > 100000 end)
+    |> Enum.reject(fn value -> value > 100_000 end)
     |> Enum.sum()
   end
 
   # 4 find size of dir to remove
   defp find_size_of_removable_dir(%{"root" => size_used} = input) do
-    disk_size = 70000000
-    size_required = 30000000
+    disk_size = 70_000_000
+    size_required = 30_000_000
     free_size = disk_size - size_used
     size_to_free = size_required - free_size
 
-    thing = input
+    input
     |> Map.keys()
-    |> Enum.map(fn key -> 
+    |> Enum.map(fn key ->
       input[key]
     end)
     |> Enum.reject(fn item -> size_to_free > item end)
@@ -202,7 +207,7 @@ defmodule Day7Test do
     test_data = read_test()
 
     test_result = FileSystemMachine.find_size_of_dir_to_remove(test_data)
-    assert test_result == 24933642
+    assert test_result == 24_933_642
 
     real_data = read_fixture()
     real_result = FileSystemMachine.find_size_of_dir_to_remove(real_data)

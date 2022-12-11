@@ -218,7 +218,7 @@ defmodule TreeHouseLocatorMachine do
       line_data
       |> Enum.map(fn line ->
         line
-        |> Enum.map(fn [itemm, score] -> score end)
+        |> Enum.map(fn [_item, score] -> score end)
         |> Enum.sort()
         |> List.last()
       end)
