@@ -1,10 +1,21 @@
+defmodule ExtraMath do
+  # https://programming-idioms.org/idiom/75/compute-lcm/983/elixir
+  # Compute the least common multiple x of big integers a and b when dealing with big numbers
+  def gcd(a, 0), do: a
+  def gcd(0, b), do: b
+  def gcd(a, b), do: gcd(b, rem(a, b))
+
+  def lcm(0, 0), do: 0
+  def lcm(a, b), do: div(a * b, gcd(a, b))
+end
+
 defmodule MonkeyMachine do
   @moduledoc """
-  module-wide docs
+  Figure out where monkeys are throwing things
   """
 
   @doc """
-  What does this do?
+  Figure out where monkeys are throwing things after 20 rounds
 
   ## Parameters
 
@@ -20,25 +31,42 @@ defmodule MonkeyMachine do
     input_data
     |> divide_per_instruction()
     |> instruction_to_map()
-    |> cycle_through_rounds(0, 20, false)
+    |> cycle_through_rounds(0, 20, nil)
     |> get_2_higest_inspect_counts()
-
-    # divide per instruction
-    # divide instructions in to objects
-    # cycle through rounds
   end
 
+  @doc """
+  Figure out where monkeys are throwing things after 10,000 rounds
+  The extra kicker is that we have a number that grows to several megabytes.
+  so there is some special logic involved to deal with keeping the number down
+  (lcm)
+
+  ## Parameters
+
+    - input_data: newline-split records of something.
+
+  ## Examples
+
+      iex> example(input_data)
+      TBD
+
+  """
   def find_business_by_2_active_monkeys_extra_worried(input_data) do
-    input_data
-    |> divide_per_instruction()
-    |> instruction_to_map()
-    |> cycle_through_rounds(0, 10_000, true)
+    map =
+      input_data
+      |> divide_per_instruction()
+      |> instruction_to_map()
 
-    # |> get_2_higest_inspect_counts()
+    # The number here wll grow too fast, so i need to figure out how to
+    # find a least common multiple to relieve the big number during each throw
+    lcm_of_divisors =
+      map
+      |> Enum.map(fn %{divisible: divisible} -> divisible end)
+      |> Enum.reduce(&ExtraMath.lcm/2)
 
-    # divide per instruction
-    # divide instructions in to objects
-    # cycle through rounds
+    map
+    |> cycle_through_rounds(0, 10_000, lcm_of_divisors)
+    |> get_2_higest_inspect_counts()
   end
 
   defp divide_per_instruction(input_data) do
@@ -89,33 +117,38 @@ defmodule MonkeyMachine do
     end)
   end
 
-  defp cycle_through_rounds(monkeys, total_rounds, total_rounds, _extra_worried), do: monkeys
+  defp cycle_through_rounds(monkeys, total_rounds, total_rounds, _lcm_of_divisors), do: monkeys
 
-  defp cycle_through_rounds(monkeys, round, total_rounds, extra_worried) do
-    IO.inspect(round)
+  defp cycle_through_rounds(monkeys, round, total_rounds, lcm_of_divisors) do
     total_count = Enum.count(monkeys)
-    new_monkeys = inspect_and_throw_items(0, monkeys, total_count, nil, extra_worried)
-    cycle_through_rounds(new_monkeys, round + 1, total_rounds, extra_worried)
+    new_monkeys = inspect_and_throw_items(0, monkeys, total_count, nil, lcm_of_divisors)
+    cycle_through_rounds(new_monkeys, round + 1, total_rounds, lcm_of_divisors)
   end
 
   # All monkeys have thrown
   defp inspect_and_throw_items(monkey_number, monkeys, monkey_number, _, _), do: monkeys
 
   # Monkey has hrown all its item, switch to new monkey
-  defp inspect_and_throw_items(monkey_number, monkeys, total_count, [], extra_worried) do
-    inspect_and_throw_items(monkey_number + 1, monkeys, total_count, nil, extra_worried)
+  defp inspect_and_throw_items(monkey_number, monkeys, total_count, [], lcm_of_divisors) do
+    inspect_and_throw_items(monkey_number + 1, monkeys, total_count, nil, lcm_of_divisors)
   end
 
   # start new monkey throw
-  defp inspect_and_throw_items(monkey_number, monkeys, total_count, nil, extra_worried) do
+  defp inspect_and_throw_items(monkey_number, monkeys, total_count, nil, lcm_of_divisors) do
     %{items: items} = Enum.at(monkeys, monkey_number)
     new_monkeys = create_new_monkey_map(monkeys, monkey_number, %{items: []})
 
-    inspect_and_throw_items(monkey_number, new_monkeys, total_count, items, extra_worried)
+    inspect_and_throw_items(monkey_number, new_monkeys, total_count, items, lcm_of_divisors)
   end
 
   # Cycle through throwing
-  defp inspect_and_throw_items(monkey_number, monkeys, total_count, [item | rest], extra_worried) do
+  defp inspect_and_throw_items(
+         monkey_number,
+         monkeys,
+         total_count,
+         [item | rest],
+         lcm_of_divisors
+       ) do
     %{
       divisible: divisible,
       if_true: if_true,
@@ -124,7 +157,7 @@ defmodule MonkeyMachine do
       inspected_items: inspected_items
     } = Enum.at(monkeys, monkey_number)
 
-    new_item = operate(operation, item, extra_worried)
+    new_item = operate(operation, item, lcm_of_divisors)
     to_monkey = divisible_test(divisible, if_true, if_false, new_item)
     %{items: target_items} = Enum.at(monkeys, to_monkey)
 
@@ -141,7 +174,7 @@ defmodule MonkeyMachine do
       monkeys_with_new_items,
       total_count,
       rest,
-      extra_worried
+      lcm_of_divisors
     )
   end
 
@@ -166,7 +199,7 @@ defmodule MonkeyMachine do
     end)
   end
 
-  defp operate(%{operator: operator, x: x, y: y}, prev_value, extra_worried) do
+  defp operate(%{operator: operator, x: x, y: y}, prev_value, lcm_of_divisors) do
     parsed_x =
       case x do
         "old" -> prev_value
@@ -187,10 +220,8 @@ defmodule MonkeyMachine do
         "-" -> parsed_x - parsed_y
       end
 
-    monkey_factor = 17 * 5 * 11 * 13 * 3 * 19 * 7
-
-    if extra_worried,
-      do: worry_level |> round_it(),
+    if lcm_of_divisors,
+      do: worry_level |> round_it() |> rem(lcm_of_divisors),
       else: (worry_level / 3) |> round_it()
   end
 
@@ -267,8 +298,8 @@ defmodule Day11Test do
     test_result = MonkeyMachine.find_business_by_2_active_monkeys_extra_worried(test_data)
     assert test_result == 2_713_310_158
 
-    # real_data = read_fixture()
-    # real_result = MonkeyMachine.find_business_by_2_active_monkeys_extra_worried(real_data)
-    # IO.puts(" Puzzle 2 answer: << #{real_result} >>")
+    real_data = read_fixture()
+    real_result = MonkeyMachine.find_business_by_2_active_monkeys_extra_worried(real_data)
+    IO.puts(" Puzzle 2 answer: << #{real_result} >>")
   end
 end
