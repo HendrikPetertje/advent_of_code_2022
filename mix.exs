@@ -24,7 +24,8 @@ defmodule AOC2022.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false}
+      {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false},
+      {:decimal, "~> 2.0"}
     ]
   end
 end
