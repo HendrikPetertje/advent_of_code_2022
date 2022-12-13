@@ -296,7 +296,7 @@ defmodule Day12Test do
     MiniDb.wipe()
 
     real_data = read_fixture()
-    real_result = ClimbingMachine.find_path_to_top(real_data)
+    real_result = ClimbingMachine.find_path_to_top(real_data, false)
     IO.puts(" Puzzle 1 answer: << #{real_result} >>")
 
     MiniDb.wipe()
