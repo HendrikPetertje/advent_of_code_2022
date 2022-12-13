@@ -25,7 +25,8 @@ defmodule AOC2022.MixProject do
   defp deps do
     [
       {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:decimal, "~> 2.0"}
+      {:decimal, "~> 2.0"},
+      {:jason, "~> 1.4"}
     ]
   end
 end
