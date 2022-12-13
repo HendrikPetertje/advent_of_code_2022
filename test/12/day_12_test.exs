@@ -295,11 +295,11 @@ defmodule Day12Test do
 
     MiniDb.wipe()
 
-    # real_data = read_fixture()
-    # real_result = ClimbingMachine.find_path_to_top(real_data)
-    # IO.puts(" Puzzle 1 answer: << #{real_result} >>")
+    real_data = read_fixture()
+    real_result = ClimbingMachine.find_path_to_top(real_data)
+    IO.puts(" Puzzle 1 answer: << #{real_result} >>")
 
-    # MiniDb.wipe()
+    MiniDb.wipe()
   end
 
   test "Puzzle 2: find quickest path to any a" do
@@ -315,5 +315,7 @@ defmodule Day12Test do
     real_data = read_fixture()
     real_result = ClimbingMachine.find_path_to_top(real_data, true)
     IO.puts(" Puzzle 1 answer: << #{real_result} >>")
+
+    MiniDb.wipe()
   end
 end
