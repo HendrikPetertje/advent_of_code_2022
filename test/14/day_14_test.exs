@@ -29,11 +29,11 @@ end
 
 defmodule RegolithMachine do
   @moduledoc """
-  module-wide docs
+  The regolith machine simulates falling sand
   """
 
   @doc """
-  What does this do?
+  calculate the number of blocks that would come to rest
 
   ## Parameters
 
@@ -41,8 +41,8 @@ defmodule RegolithMachine do
 
   ## Examples
 
-      iex> example(input_data)
-      TBD
+      iex> number_of_sand_blocks_that_rest(input_data)
+      4000
 
   """
   def number_of_sand_blocks_that_rest(input_data, there_is_a_floor) do
